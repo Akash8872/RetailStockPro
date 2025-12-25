@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Dashboard - Inventory System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">RetailStock Pro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link active" href="/dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
+                    <li class="nav-item"><a class="nav-link" href="/swagger-ui/index.html">API Docs</a></li>
+                </ul>
+                <form class="d-flex" th:action="@{/logout}" method="post">
+                    <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1>Dashboard</h1>
+        <p>Welcome, <span th:text="${#authentication.name}">User</span>!</p>
+
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-white bg-primary mb-3">
+                    <div class="card-header">Total Products</div>
+                    <div class="card-body">
+                        <h5 class="card-title display-4" th:text="${totalProducts ?: 0}">0</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-danger mb-3">
+                    <div class="card-header">Low Stock Items</div>
+                    <div class="card-body">
+                        <h5 class="card-title display-4" th:text="${lowStockCount ?: 0}">0</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-white bg-success mb-3">
+                    <div class="card-header">Inventory Value</div>
+                    <div class="card-body">
+                        <h5 class="card-title display-4" th:text="${'₹' + (inventoryValue ?: 0)}">₹0</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="mt-4">Low Stock Alerts</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Stock</th>
+                    <th>Threshold</th>
+                    <th>Supplier</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${lowStockProducts}">
+                    <td th:text="${product.name}">Widget</td>
+                    <td th:text="${product.quantityInStock}" class="text-danger fw-bold">2</td>
+                    <td th:text="${product.lowStockThreshold}">5</td>
+                    <td th:text="${product.supplier?.name}">Supplier A</td>
+                    <td><a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn btn-sm btn-primary">Restock</a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(lowStockProducts)}">
+                    <td colspan="5" class="text-center">No items are low on stock.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
